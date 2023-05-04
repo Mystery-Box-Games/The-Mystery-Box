@@ -22,6 +22,13 @@ public class PlayerController : NetworkBehaviour
     private CinemachineFreeLook vcam;
     private Transform tFollowTarget;
 
+    // jump variables
+    private Vector3 _playerVelocity;
+    private bool _grounded;
+    [SerializeField] private float _jumpHeight = 5.0f;
+    private bool _jumpPressed = false;
+    private float _gravity = -9.81f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,6 +53,8 @@ public class PlayerController : NetworkBehaviour
             randomNumber.Value = Random.Range(0, 100);
         }
 
+        MovementJump();
+
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
@@ -67,5 +76,36 @@ public class PlayerController : NetworkBehaviour
         {
             Debug.Log(OwnerClientId + "; randomNumber: " + randomNumber.Value);
         };
+    }
+
+    private void MovementJump()
+    {
+        _grounded = controller.isGrounded;
+
+        if (_grounded)
+        {
+            _playerVelocity.y = 0.0f;
+        }
+
+        if (_jumpPressed && _grounded)
+        {
+            _playerVelocity.y += Mathf.Sqrt(_jumpHeight * -1.0f * _gravity);
+            _jumpPressed = false;
+        }
+
+        _playerVelocity.y += _gravity * Time.deltaTime;
+        controller.Move(_playerVelocity * Time.deltaTime);
+    }
+
+    private void OnJump()
+    {
+        if (controller.velocity.y == 0)
+        {
+            Debug.Log("can jump");
+            _jumpPressed = true;
+        } else
+        {
+            Debug.Log("Cant jump");
+        }
     }
 }
