@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -17,17 +18,28 @@ public class PlayerController : NetworkBehaviour
 
     // cannot use value that can be null
     private NetworkVariable<int> randomNumber = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    
+    private CinemachineFreeLook vcam;
+    private Transform tFollowTarget;
 
     // Start is called before the first frame update
     void Start()
     {
         cam = GameObject.Find("Main Camera").transform;
+        vcam = GameObject.FindGameObjectWithTag("ThirdPersonCamera").GetComponent<CinemachineFreeLook>();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (!IsOwner) return;
+
+        if (tFollowTarget == null)
+        {
+            tFollowTarget = gameObject.transform;
+            vcam.LookAt = tFollowTarget;
+            vcam.Follow = tFollowTarget;
+        }
 
         if (Input.GetKeyDown(KeyCode.T))
         {
