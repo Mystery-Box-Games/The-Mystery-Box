@@ -707,11 +707,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 
+  cloudProjectId: c7108b51-b8bb-427b-a948-3fa7fc19d4c3
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
-  organizationId: 
+  projectName: The Mystery Box
+  organizationId: mystery-box-games
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   playerDataPath: 
