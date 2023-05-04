@@ -15,6 +15,9 @@ public class PlayerController : NetworkBehaviour
     public float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
 
+    // cannot use value that can be null
+    private NetworkVariable<int> randomNumber = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +28,11 @@ public class PlayerController : NetworkBehaviour
     void Update()
     {
         if (!IsOwner) return;
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            randomNumber.Value = Random.Range(0, 100);
+        }
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
@@ -39,5 +47,13 @@ public class PlayerController : NetworkBehaviour
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             controller.Move(moveDir.normalized * speed * Time.deltaTime);
         }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        randomNumber.OnValueChanged += (int previousValue, int newValue) =>
+        {
+            Debug.Log(OwnerClientId + "; randomNumber: " + randomNumber.Value);
+        };
     }
 }
