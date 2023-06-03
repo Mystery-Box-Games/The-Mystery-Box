@@ -9,6 +9,7 @@ using Unity.Services.Core;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TestRelay : MonoBehaviour
 {
@@ -30,12 +31,15 @@ public class TestRelay : MonoBehaviour
     {
         try
         {
+            SceneManager.LoadScene(1);
+
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
 
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
             Debug.Log(joinCode);
             code.text = "Join Code: " + joinCode;
+            GameManager.joinCode = joinCode;
 
             RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
@@ -54,6 +58,9 @@ public class TestRelay : MonoBehaviour
         try
         {
             Debug.Log("Joining Relay with " + joinCode);
+
+            SceneManager.LoadScene(1);
+
             JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
             RelayServerData relayServerData = new RelayServerData(joinAllocation, "dtls");
